@@ -23,7 +23,7 @@ using namespace std;
 #pragma GCC optimize("O3,unroll-loops")
 #pragma GCC target("avx2,bmi,bmi2,lzcnt,popcnt")
 #define fast() ios::sync_with_stdio(false);cin.tie(nullptr);cout.tie(nullptr)
-#define fileio() freopen("input.txt","r",stdin);freopen("output.txt","w",stdout)
+#define fileio() { if(std::ifstream("input.txt")) freopen("input.txt","r",stdin); if(std::ofstream("output.txt")) freopen("output.txt","w",stdout); }
 
 //---------------------------------------------------------------
 
@@ -139,8 +139,9 @@ template<typename T> struct SegmentTree {
 //               Goal To Become Legendary Grandmaster
 //---------------------------------------------------------------
 
+
 int main() {
     fast();
     fileio();
+    
 }
-
