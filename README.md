@@ -9,17 +9,22 @@
 using namespace std;
 
 //---------------------------------------------------------------
+// Code reference: https://github.com/myJaiGurudev/CP/blob/main/README.md
+//---------------------------------------------------------------
+
+//---------------------------------------------------------------
+//                     Macros begin
+//---------------------------------------------------------------
+
+//---------------------------------------------------------------
 //                     Speed + Optimization
 //---------------------------------------------------------------
 
 #pragma GCC optimize("O3,unroll-loops")
 #pragma GCC target("avx2,bmi,bmi2,lzcnt,popcnt")
-
 #define fast() ios::sync_with_stdio(false);cin.tie(nullptr);cout.tie(nullptr)
 #define fileio() freopen("input.txt","r",stdin);freopen("output.txt","w",stdout)
 
-//---------------------------------------------------------------
-//                     Macros begin
 //---------------------------------------------------------------
 
 #define fori(i,b,n) for(int i=b;i<n;i++)
@@ -46,25 +51,12 @@ using namespace std;
 #define mina(arr,n) *min_element(arr,arr+n)
 
 ll gcd(ll a,ll b) {
-    while(b!=0) {
-        ll temp=b;
-        b=a%b;
-        a=temp;
-    }
+    while(b!=0) { ll temp=b; b=a%b; a=temp; }
     return a;
 }
-void YES(int t) {
-    if(t) cout<<"YES";
-    else cout<<"NO";
-}
-void Yes(int t) {
-    if(t) cout<<"Yes";
-    else cout<<"No";
-}
-void yes(int t) {
-    if(t) cout<<"yes";
-    else cout<<"no";
-}
+void YES(int t) { if(t) cout<<"YES"; else cout<<"NO"; }
+void Yes(int t) { if(t) cout<<"Yes"; else cout<<"No"; }
+void yes(int t) { if(t) cout<<"yes"; else cout<<"no"; }
 
 //---------------------------------------------------------------
 
@@ -75,6 +67,68 @@ template<typename T,typename...Args> void print_values(const T&t,const Args&...a
 template<typename T> void input_values(T&t){cin>>t;}
 template<typename T> void input_values(vector<T>&vec,int n){T val;for(int i=0;i<n;++i){cin>>val;vec.push_back(val);}}
 template<typename T,typename...Args> void input_values(T&t,Args&...args){input_values(t);input_values(args...);}
+
+//---------------------------------------------------------------
+//                     General Segment Tree
+//---------------------------------------------------------------
+
+template<typename T> struct SegmentTree {
+    int n;
+    vector<T> tree, lazy;
+    bool lazy_flag;
+    T def;
+    function<T(T,T)> func;
+
+    SegmentTree(vector<T> &arr, T d, function<T(T,T)> f, bool lf=false) {
+        n = arr.size();
+        def = d;
+        func = f;
+        lazy_flag = lf;
+        tree.assign(4*n, def);
+        if(lazy_flag) lazy.assign(4*n,0);
+        build(0,0,n-1,arr);
+    }
+
+    void build(int v,int l,int r, vector<T> &a) {
+        if(l==r){ tree[v]=a[l]; return; }
+        int m=(l+r)/2;
+        build(2*v+1,l,m,a);
+        build(2*v+2,m+1,r,a);
+        tree[v]=func(tree[2*v+1],tree[2*v+2]);
+    }
+
+    void push(int v,int l,int r) {
+        if(!lazy_flag || lazy[v]==0) return;
+        tree[v]+=lazy[v];
+        if(l!=r){ lazy[2*v+1]+=lazy[v]; lazy[2*v+2]+=lazy[v]; }
+        lazy[v]=0;
+    }
+
+    void update(int v,int l,int r,int ql,int qr,T val){
+        push(v,l,r);
+        if(qr<l || ql>r) return;
+        if(ql<=l && r<=qr){
+            if(lazy_flag){ lazy[v]+=val; push(v,l,r); }
+            else tree[v]=val;
+            return;
+        }
+        int m=(l+r)/2;
+        update(2*v+1,l,m,ql,qr,val);
+        update(2*v+2,m+1,r,ql,qr,val);
+        tree[v]=func(tree[2*v+1],tree[2*v+2]);
+    }
+
+    T query(int v,int l,int r,int ql,int qr){
+        push(v,l,r);
+        if(qr<l || ql>r) return def;
+        if(ql<=l && r<=qr) return tree[v];
+        int m=(l+r)/2;
+        return func(query(2*v+1,l,m,ql,qr), query(2*v+2,m+1,r,ql,qr));
+    }
+
+    void update(int l,int r,T val){ update(0,0,n-1,l,r,val); }
+    T query(int l,int r){ return query(0,0,n-1,l,r); }
+};
 
 //---------------------------------------------------------------
 //                     Macros end
@@ -89,3 +143,4 @@ int main() {
     fast();
     fileio();
 }
+
