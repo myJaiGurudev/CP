@@ -7,15 +7,15 @@ class Fenwick:
   
   def update(self,ix,v):
     while ix<=self.sz:
-      self.dp[ix]=v 
-      ix=ix&-ix
+      self.dp[ix]=max(self.dp[ix],v)
+      ix+=ix&-ix
   
   def query(self,ix):
-    res=0
+    mx=0
     while ix>0:
-      res=max(res,self.dp[ix])
+      mx=max(res,self.dp[ix])
       ix-=ix&-ix 
-    return res
+    return mx
 ```
 
 ```cpp
