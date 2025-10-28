@@ -1,4 +1,21 @@
 # Default code
+```py
+class Fenwick:
+  def __init__(self,n):
+    self.sz=n 
+    self.dp=[0]*(n+1)
+  
+  def update(self,ix,v):
+    while ix<=self.sz:
+      self.dp[ix]=v 
+      ix=ix&-ix
+  
+  def query(self,ix):
+    res=0
+    while ix>0:
+      res=max(res,self.dp[ix])
+      ix-=ix&-ix 
+    return res
 
 ```cpp
 //---------------------------------------------------------------
