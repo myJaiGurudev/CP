@@ -16,6 +16,7 @@ class Fenwick:
       res=max(res,self.dp[ix])
       ix-=ix&-ix 
     return res
+```
 
 ```cpp
 //---------------------------------------------------------------
