@@ -1,5 +1,6 @@
 # Fenwick Tree
-```pyclass Fenwick:
+```py
+class Fenwick:
     def __init__(self,n,mode='sum',one_indexed=False):
         self.sz=n
         self.mode=mode
