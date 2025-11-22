@@ -1,23 +1,96 @@
-# Default code
-```py
-class Fenwick:
-  def __init__(self,n):
-    self.sz=n 
-    self.dp=[0]*(n+1)
-  
-  def update(self,ix,v):
-    while ix<=self.sz:
-      self.dp[ix]=max(self.dp[ix],v)
-      ix+=ix&-ix
-  
-  def query(self,ix):
-    mx=0
-    while ix>0:
-      mx=max(res,self.dp[ix])
-      ix-=ix&-ix 
-    return mx
+# Fenwick Tree
+```pyclass Fenwick:
+    def __init__(self,n,mode='sum',one_indexed=False):
+        self.sz=n
+        self.mode=mode
+        self.one=one_indexed
+        if mode=='sum':
+            self.dp=[0]*(n+1)
+        else:
+            self.dp=[-10**18]*(n+1)
+
+    def _to1(self,ix):
+        return ix if self.one else ix+1
+
+    def build(self,arr):
+        if self.mode=='sum':
+            for i,val in enumerate(arr,1):
+                self.dp[i]+=val
+                j=i+(i&-i)
+                if j<=self.sz:
+                    self.dp[j]+=self.dp[i]
+        else:
+            for i,val in enumerate(arr,1):
+                j=i
+                while j<=self.sz:
+                    if self.dp[j]<val:
+                        self.dp[j]=val
+                    j+=j&-j
+
+    def update(self,ix,v):
+        ix=self._to1(ix)
+        if self.mode=='sum':
+            while ix<=self.sz:
+                self.dp[ix]+=v
+                ix+=ix&-ix
+        else:
+            while ix<=self.sz:
+                if self.dp[ix]<v:
+                    self.dp[ix]=v
+                ix+=ix&-ix
+
+    def query(self,ix):
+        ix=self._to1(ix)
+        if self.mode=='sum':
+            s=0
+            while ix>0:
+                s+=self.dp[ix]
+                ix-=ix&-ix
+            return s
+        m=-10**18
+        while ix>0:
+            if self.dp[ix]>m:
+                m=self.dp[ix]
+            ix-=ix&-ix
+        return m
+
+    def range_query(self,l,r):
+        if self.mode!='sum':
+            return None
+        return self.query(r)-self.query((l-1) if self.one else (l-1))
+
+    def point_set(self,ix,v):
+        if self.mode!='sum':
+            return
+        cur=self.range_query(ix,ix)
+        self.update(ix,v-cur)
 ```
 
+# DSU
+```py
+class DSU:
+    def __init__(self,n):
+        self.parent=list(range(n))
+        self.size=[1]*n
+
+    def find(self,x):
+        while self.parent[x]!=x:
+            self.parent[x]=self.parent[self.parent[x]]
+            x=self.parent[x]
+        return x
+
+    def union(self,a,b):
+        ra,rb=self.find(a),self.find(b)
+        if ra==rb:
+            return False
+        if self.size[ra]<self.size[rb]:
+            ra,rb=rb,ra
+        self.parent[rb]=ra
+        self.size[ra]+=self.size[rb]
+        return True
+```
+
+# Default code
 ```cpp
 //---------------------------------------------------------------
 //               Jai Gurudev Naam Prabhu Ka
