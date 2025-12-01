@@ -90,6 +90,40 @@ class DSU:
         self.size[ra]+=self.size[rb]
         return True
 ```
+# Trie 
+```py
+class TrieNode:
+    def __init__(self):
+        self.child=[None,None]
+        self.cnt=0
+
+class Trie:
+    def __init__(self,max_bits):
+        self.root=TrieNode()
+        self.max_bits=max_bits
+    def insert(self,num):
+        node=self.root
+        for i in range(self.max_bits-1,-1,-1):
+            b=(num>>i)&1
+            if not node.child[b]:
+                node.child[b]=TrieNode()
+            node=node.child[b]
+            node.cnt+=1
+    def countLessXOR(self,num,k):
+        node=self.root
+        res=0
+        for i in range(self.max_bits-1,-1,-1):
+            if not node:break
+            nb=(num>>i)&1
+            kb=(k>>i)&1
+            if kb==1:
+                if node.child[nb]:
+                    res+=node.child[nb].cnt
+                node=node.child[1-nb]
+            else:
+                node=node.child[nb]
+        return res
+```
 
 # Default code
 ```cpp
